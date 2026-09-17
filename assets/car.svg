@@ -1,0 +1,81 @@
+<!--
+  F1 car silhouette, side profile, facing right (traced from the reference
+  artwork). Reference copy of the SVG inlined in index.html (#loader).
+
+  Native car units are 1972x413; it sits at translate(560 0) so the motion
+  blur trail (x 0-600) is to the left of the body. The car is painted in
+  currentColor and its cut-outs (helmet, halo, mirror, rims) in the page
+  background colour so it works on the dark loader. .wheel groups are rotated
+  by js/loader.js; .car-body is measured for the "rear of the car" position
+  that reveals the letters.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2540 420" width="2540" height="420"
+     color="#f5f5f5" style="background:#0a0a0a">
+  <defs>
+    <linearGradient id="trail" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="600" y2="0">
+      <stop offset="0" stop-color="#1f6fd0" stop-opacity="0"/>
+      <stop offset="1" stop-color="#1f6fd0" stop-opacity="0.7"/>
+    </linearGradient>
+  </defs>
+  <!-- Motion blur trail (x 0-600, to the left of the car) -->
+  <g class="trail" fill="none" stroke="url(#trail)" stroke-width="10" stroke-linecap="round">
+    <path d="M80 130H600"/>
+    <path d="M0 220H600"/>
+    <path d="M140 310H600"/>
+  </g>
+  <g transform="translate(560 0)">
+  <g class="car-body" fill="currentColor">
+    <!-- Rear wing: endplate + swept lower plate -->
+    <path d="M95 75 L302 78 L302 150 L340 150 L340 245 L300 272 L180 336 L0 300 L0 238 Z"/>
+    <!-- Rear wing / engine cover slab -->
+    <path d="M338 148 L840 40 L925 44 L905 118 L340 215 Z"/>
+    <!-- T-cam on top of the airbox -->
+    <path d="M836 12 L922 12 L922 46 L904 46 L904 62 L858 62 L858 46 L836 46 Z"/>
+    <!-- Airbox, roll hoop and cockpit deck -->
+    <path d="M838 40 L928 44 L970 100 L984 152 L1050 152 L1058 182 L1296 182 L1300 160 L1050 180 L960 120 L905 118 Z"/>
+    <!-- Lower body: sidepod, floor and nose -->
+    <path d="M300 235 L390 228 L1050 180 L1300 160 L1420 165 L1560 200 L1692 248 Q1704 272 1700 300 L1600 306 L1450 330 L1420 388 L300 388 L250 360 Z"/>
+    <!-- Halo (band with hollow interior) -->
+    <path fill-rule="evenodd" d="M1040 184 L1080 92 Q1088 80 1104 80 L1250 80 Q1276 80 1290 106 L1302 184 Z M1068 184 L1100 110 Q1104 104 1112 104 L1246 104 Q1262 104 1270 118 L1282 184 Z"/>
+    <!-- Halo centre pillar -->
+    <rect x="1140" y="140" width="52" height="46" rx="10"/>
+    <!-- Front wing: upper flap, main plane, endplate -->
+    <path d="M1692 248 L1945 318 L1945 336 L1730 318 L1700 300 Z"/>
+    <path d="M1705 346 L1945 346 L1945 388 L1700 388 Z"/>
+    <path d="M1930 322 L1958 252 L1972 258 L1972 388 L1930 388 Z"/>
+
+    <!-- Cut-outs, painted in the background colour -->
+    <g class="cut" fill="var(--bg, #0a0a0a)">
+      <rect x="250" y="80" width="10" height="88"/>                 <!-- DRS slit -->
+      <circle cx="1010" cy="120" r="33"/>                            <!-- helmet -->
+      <rect x="1064" y="204" width="46" height="90" rx="8"/>         <!-- mirror -->
+      <path d="M1140 322 L1246 280 L1252 292 L1152 334 Z"/>          <!-- sidepod swoosh -->
+      <path d="M1318 300 L1345 300 L1330 350 L1418 352 L1418 366 L1306 366 L1306 356 Z"/> <!-- sidepod inlet -->
+    </g>
+    <!-- Gaps that separate the wheels from the bodywork -->
+    <g class="cut" fill="none" stroke="var(--bg, #0a0a0a)" stroke-width="14">
+      <circle cx="265" cy="295" r="128"/>
+      <circle cx="1555" cy="290" r="130"/>
+    </g>
+
+    <!-- Rear wheel -->
+    <g class="wheel">
+      <circle cx="265" cy="295" r="120"/>
+      <g class="cut" fill="none" stroke="var(--bg, #0a0a0a)" stroke-linecap="round">
+        <circle cx="265" cy="295" r="78" stroke-width="12"/>
+        <circle cx="265" cy="295" r="16" stroke-width="12"/>
+        <path stroke-width="9" d="M265 267V223 M265 323V367 M237 295H193 M293 295H337 M245 275L214 244 M285 315L316 346 M285 275L316 244 M245 315L214 346"/>
+      </g>
+    </g>
+    <!-- Front wheel -->
+    <g class="wheel">
+      <circle cx="1555" cy="290" r="122"/>
+      <g class="cut" fill="none" stroke="var(--bg, #0a0a0a)" stroke-linecap="round">
+        <circle cx="1555" cy="290" r="80" stroke-width="12"/>
+        <circle cx="1555" cy="290" r="16" stroke-width="12"/>
+        <path stroke-width="9" d="M1555 262V218 M1555 318V362 M1527 290H1483 M1583 290H1627 M1535 270L1504 239 M1575 310L1606 341 M1575 270L1606 239 M1535 310L1504 341"/>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>

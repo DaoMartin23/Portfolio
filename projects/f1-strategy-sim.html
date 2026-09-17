@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F1 Strategy Sim — Martin Dao</title>
+  <meta name="description" content="Browser-based F1 race strategy game: deterministic Python sim, stateless FastAPI, React front end, and a Monte Carlo optimal-strategy search.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0a'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%231f6fd0'/%3E%3Ctext x='16' y='27' font-family='monospace' font-size='14' font-weight='700' fill='%23f5f5f5'%3EMD%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.add('js');</script>
+  <!-- On a refresh, always start at the top of this page: turn off the
+       browser's scroll restoration, drop any #hash so it can't jump to a
+       section, and pin the scroll position before first paint and on load.
+       Normal navigation (links, back/forward) is left alone. -->
+  <script>
+    (function () {
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var reload = nav ? nav.type === 'reload'
+                       : !!(performance.navigation && performance.navigation.type === 1);
+      if (!reload) return;
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      function top() {
+        try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }
+        catch (e) { window.scrollTo(0, 0); }
+      }
+      top();
+      window.addEventListener('load', top);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts load without blocking first paint: fetched as a print sheet, then
+       promoted to all media once downloaded. No-JS visitors get the noscript copy. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap"></noscript>
+  <link rel="stylesheet" href="../css/style.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__logo nav__logo--name" href="../index.html">
+        <span class="nav__logo-text">Martin Dao</span>
+        <span class="visually-hidden">, home</span>
+      </a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <span></span><span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav__links" id="nav-links">
+          <li><a href="../index.html#about">About</a></li>
+          <li><a href="../index.html#experience">Experience</a></li>
+          <li><a href="../index.html#projects" aria-current="true">Projects</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero" data-hero>
+      <div class="container">
+        <a class="back-link" href="../index.html#projects" data-reveal>← All projects</a>
+        <h1 data-reveal>F1 Strategy Sim</h1>
+        <p class="project-hero__lede" data-reveal>Browser-based F1 race strategy game. Pick a car and grid slot, race a 20-car field lap by lap, and make the calls when it rains, when a safety car comes out, when to pit.</p>
+        <div class="project-hero__meta" data-reveal>
+          <ul class="chips" aria-label="Tags">
+            <li class="chip">Python</li>
+            <li class="chip">FastAPI</li>
+            <li class="chip">React</li>
+            <li class="chip">TypeScript</li>
+            <li class="chip">Monte Carlo</li>
+          </ul>
+          <a class="btn btn--primary" href="https://github.com/DaoMartin23/F1-Strategy-Sim" target="_blank" rel="noopener">View repo</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="project-content">
+      <div class="container">
+
+        <section class="project-section" data-reveal>
+          <h2>Overview</h2>
+          <p>You are the strategist, not the driver. Choose a car and a starting position, then run the race one lap at a time against nineteen AI-controlled rivals. Tyres degrade, weather turns, safety cars bunch the field, cars pick up damage in collisions, and the rivals run strategies of their own. Every one of those is a decision point: stay out, box now, gamble on inters.</p>
+          <p>The whole race is <strong>deterministic</strong>. Same seed, same choices, same result. That makes it replayable, debuggable, and, crucially, something you can search over to find the strategy you should have run.</p>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>Architecture</h2>
+          <p>Three layers with a hard boundary between each. The simulation knows nothing about HTTP, the API knows nothing about React, and the front end only ever sees JSON.</p>
+          <div class="arch-grid">
+            <article class="card">
+              <h3>sim/</h3>
+              <p>Pure Python, no I/O. Every random draw comes from an RNG seeded by <code>(seed, lap, purpose)</code>, so lap 23's rain roll is the same whether you replay from the start or resume mid-race.</p>
+            </article>
+            <article class="card">
+              <h3>api/</h3>
+              <p>Stateless FastAPI. The full race state travels with each request and comes back updated. No sessions, no database, trivially horizontally scalable, and every request is reproducible in isolation.</p>
+            </article>
+            <article class="card">
+              <h3>web/</h3>
+              <p>React + Vite + TypeScript. Types are generated from the API schema so the client and server can't disagree about what a lap looks like.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>The Monte Carlo optimal-strategy search</h2>
+          <p>After the chequered flag, the debrief screen asks the question every strategist dreads: <strong>what should you have done?</strong> The answer comes from sampling.</p>
+          <div class="facts">
+            <div class="fact"><div class="fact__num">500</div><div class="fact__label">sampled strategies</div></div>
+            <div class="fact"><div class="fact__num">~39s</div><div class="fact__label">search time</div></div>
+            <div class="fact"><div class="fact__num">async</div><div class="fact__label">fetched in debrief</div></div>
+          </div>
+          <p>Because the sim is deterministic per <code>(seed, lap, purpose)</code>, each candidate strategy is replayed against the exact same race conditions you faced, not a fresh random one. The search runs 500 samples across pit windows and compound sequences, ranks by finishing position and race time, and hands back the best line it found. It takes about 39 seconds, so the front end kicks it off asynchronously and fills the debrief panel in when it lands. You can read your own race summary while it's thinking.</p>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>Testing</h2>
+          <div class="facts">
+            <div class="fact"><div class="fact__num">159</div><div class="fact__label">pytest cases</div></div>
+            <div class="fact"><div class="fact__num">strict</div><div class="fact__label">mypy --strict</div></div>
+          </div>
+          <p>The sim layer is tested as a pure function: given state and a decision, assert the next state. Determinism itself is under test, so any change that breaks seed-stability fails the suite. The API is tested end to end through the FastAPI test client, and <code>mypy --strict</code> runs across the Python codebase in CI.</p>
+          <pre><code>pytest -q          # 159 passed
+mypy --strict .    # Success: no issues found</code></pre>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>What's next</h2>
+          <ul class="list">
+            <li><strong>FastF1 calibration.</strong> Fit tyre degradation and pace deltas to real timing data instead of hand-tuned constants.</li>
+            <li><strong>More tracks.</strong> Per-circuit pit loss, overtaking difficulty and weather priors.</li>
+            <li><strong>Reactive rivals.</strong> AI cars that respond to your stops rather than running fixed plans.</li>
+            <li><strong>numpy vectorisation.</strong> Run the Monte Carlo samples as batched arrays and bring the 39 seconds down to single digits.</li>
+          </ul>
+        </section>
+
+      </div>
+    </div>
+
+    <nav class="project-pager" aria-label="Other projects">
+      <div class="container project-pager__inner">
+        <a class="prev" href="project-3.html">
+          <span class="label">← Previous</span>
+          <span class="title">Personal Informatics App</span>
+        </a>
+        <a class="next" href="fpl.html">
+          <span class="label">Next →</span>
+          <span class="title">FPL AI Assistant</span>
+        </a>
+      </div>
+    </nav>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© <span data-year>2026</span> Martin Dao</span>
+    </div>
+  </footer>
+</body>
+</html>

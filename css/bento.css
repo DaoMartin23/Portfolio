@@ -1,0 +1,645 @@
+/* ==========================================================================
+   bento.css — layered over style.css by index.html.
+   Turns the home page into one 12-column bento grid: floating nav tile,
+   an open (unboxed) hero, every section a full-width group of tiles.
+   Overrides the nav (§4), section rhythm (§5), hero (§6) and card rules
+   from style.css. Not loaded by legacy/index.html or the project pages.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  --radius: 8px;      /* tiles, nav, footer */
+  --radius-sm: 4px;   /* buttons, pill, chips, inputs */
+  --gap: clamp(0.75rem, 1.5vw, 1rem);
+  --group-gap: clamp(5rem, 12vw, 10rem); /* space between sections */
+  /* Tile tone: a clear step up from the page background, tinted towards the
+     accent so the boxes and the blue car watermarks read as one palette.
+     Renders about rgb(14,27,44) with a rgb(17,42,73) edge on #0a0a0a; the
+     contact form card (§9) is matched to the same tone. */
+  --tile-bg: rgba(31, 111, 208, 0.17);
+  --tile-line: rgba(31, 111, 208, 0.32);
+  --tile-pad: clamp(1.25rem, 2.5vw, 2rem);
+  --nav-h: 56px;
+  --nav-top: 0.75rem;
+  --nav-clear: calc(var(--nav-top) + var(--nav-h) + var(--gap));
+}
+@media (max-width: 639px) {
+  :root { --group-gap: 3.5rem; }
+}
+
+/* --------------------------------------------------------------------------
+   2. Grid
+   -------------------------------------------------------------------------- */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--group-gap) var(--gap); /* wide rows between sections, tight columns */
+  padding-top: var(--nav-clear);
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem); /* short run into the footer; sections keep the wide gap */
+}
+/* Each section spans the full width and repeats the 12 columns with the
+   same gap, so its tiles line up with every other section's tiles. */
+.bento__group {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gap);
+  scroll-margin-top: var(--nav-clear);
+}
+
+.span-3 { grid-column: span 3; }
+.span-4 { grid-column: span 4; }
+.span-5 { grid-column: span 5; }
+.span-6 { grid-column: span 6; }
+.span-7 { grid-column: span 7; }
+.span-8 { grid-column: span 8; }
+.span-12 { grid-column: 1 / -1; }
+
+/* Tablet: 6 columns. Tiles default to full width; md-N overrides. */
+@media (max-width: 999px) {
+  .bento,
+  .bento__group,
+  .hero__stage { grid-template-columns: repeat(6, 1fr); }
+  .tile,
+  .hero__text,
+  .hero__visual { grid-column: span 6; }
+  .md-2 { grid-column: span 2; }
+  .md-3 { grid-column: span 3; }
+}
+/* Phone: still 6 columns so the stat tiles can sit three across. */
+@media (max-width: 639px) {
+  .tile,
+  .hero__text,
+  .hero__visual { grid-column: span 6; }
+  .sm-2 { grid-column: span 2; }
+}
+
+/* --------------------------------------------------------------------------
+   3. Tiles
+   -------------------------------------------------------------------------- */
+.tile {
+  position: relative;
+  overflow: hidden;
+  padding: var(--tile-pad);
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-line);
+  border-radius: var(--radius);
+  isolation: isolate; /* own stacking context: the glow (::after, z -1) sits
+                         above the tile background and below everything else */
+}
+/* Controls inside tiles follow the same quiet tone */
+.form input,
+.form textarea { background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
+.chip { border-color: rgba(255, 255, 255, 0.1); }
+@media (hover: hover) {
+  .card:hover { border-color: var(--tile-line); }
+}
+/* Cursor-following glow. --gx/--gy are written by js/main.js on pointer
+   move; --glow-a sets the peak opacity per tile. Fades in on hover. */
+.tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    380px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(31, 111, 208, var(--glow-a, 0.26)),
+    rgba(31, 111, 208, calc(var(--glow-a, 0.26) * 0.3)) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+.tile.is-hover::after { opacity: 1; }
+
+/* Cards: no left stripe here; the cursor glow does the work. Clickable
+   project tiles add a faint glow around the whole edge on hover/focus. */
+.card { border-radius: var(--radius); transition: border-color 0.25s ease, box-shadow 0.3s ease; }
+.card::before { content: none; }
+.project-card:focus-within {
+  border-color: rgba(31, 111, 208, 0.6);
+  box-shadow: 0 0 0 1px rgba(31, 111, 208, 0.25), 0 0 28px rgba(31, 111, 208, 0.22);
+}
+@media (hover: hover) {
+  .project-card:hover {
+    border-color: rgba(31, 111, 208, 0.6);
+    box-shadow: 0 0 0 1px rgba(31, 111, 208, 0.25), 0 0 28px rgba(31, 111, 208, 0.22);
+  }
+}
+/* The card-wide link overlay (style.css: .project-card h3 a::after) covers
+   the whole tile; nothing inside the tile is positioned, so it stays on top. */
+.project-card { cursor: pointer; }
+
+.btn,
+.pill,
+.chip,
+.form input,
+.form textarea { border-radius: var(--radius-sm); }
+
+/* Section banners: an open full-width row above each section's tiles with
+   the mono tag and a big title. A faint car silhouette sits behind,
+   right-aligned and cropped. Its size is viewport-based, never a share of
+   the banner, so all four sections draw exactly the same car. */
+.section-banner {
+  grid-column: 1 / -1;
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(1rem, 3vw, 2rem) clamp(0.25rem, 1vw, 0.75rem);
+}
+.section-banner > * { position: relative; }
+.section-banner .section-tag { margin-bottom: 0; }
+.section-banner__title {
+  margin-top: 0.75rem;
+  font-size: clamp(2.4rem, 6.5vw, 4.75rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.section-banner__car {
+  position: absolute;
+  right: -6%;
+  top: 50%;
+  height: clamp(90px, 18vw, 265px);
+  width: auto;
+  max-width: none;
+  aspect-ratio: 1972 / 413;
+  transform: translateY(-50%);
+  color: var(--accent-light);
+  opacity: 0.09; /* faint watermark, same blue as the tile tint */
+  pointer-events: none;
+}
+@media (max-width: 639px) {
+  .section-banner__car { right: -20%; }
+}
+
+/* --------------------------------------------------------------------------
+   4. Nav: floating tile
+   -------------------------------------------------------------------------- */
+.nav {
+  inset: auto;
+  top: var(--nav-top);
+  left: max(var(--gutter), calc(50% - var(--max) / 2));
+  right: max(var(--gutter), calc(50% - var(--max) / 2));
+  height: var(--nav-h);
+  background: rgba(20, 20, 20, 0.85);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.3s ease;
+}
+.nav.is-scrolled {
+  background: rgba(20, 20, 20, 0.85);
+  border-color: var(--accent);
+}
+.nav__inner {
+  width: 100%;
+  padding-inline: 1.25rem;
+}
+@media (max-width: 719px) {
+  .nav__links {
+    top: calc(100% + 0.5rem);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.5rem 1.25rem 1rem;
+  }
+  .nav.is-open { background: rgba(20, 20, 20, 0.85); }
+}
+
+/* --------------------------------------------------------------------------
+   5. Hero tiles
+   -------------------------------------------------------------------------- */
+/* The hero is the one part of the page that is not boxed: headline and
+   helmet sit open on the background, centred in the first viewport, with the
+   stat tiles along the bottom of that screen. The radial glow from
+   style.css (.hero::before) still applies. */
+.hero {
+  min-height: calc(100svh - var(--nav-clear) - var(--gap));
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  padding: 0;
+  overflow: visible;
+}
+
+.hero__text {
+  position: relative; /* paints above .hero::before */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Row one of the hero: headline + helmet on the same 12 columns as the
+   groups. Layout only; the cursor glow is a tile effect and stops here. */
+.hero__stage {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--gap);
+  align-items: center;
+}
+/* 12 columns on desktop only; the 6-column tablet/phone rule is in §2 */
+@media (min-width: 1000px) {
+  .hero__stage { grid-template-columns: repeat(12, 1fr); }
+}
+
+.hero__visual {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero__caption { margin-top: 1rem; }
+
+/* Helmet artwork: fixed height, width follows the viewBox, centred */
+.hero__svg--helmet {
+  width: auto;
+  height: clamp(260px, 30vw, 420px);
+  margin-inline: auto;
+}
+/* Phones: helmet above the text, sized to the screen; no decorative caption */
+@media (max-width: 639px) {
+  .hero__visual { order: -1; }
+  /* A share of screen width, capped for wide phones */
+  .hero__svg--helmet { height: min(64vw, 300px); }
+  .hero__caption { display: none; }
+
+  /* Headline on one line, filling the content width (content = 90vw here;
+     the text is 10.14em wide in Space Grotesk, so 90 / 10.14 ≈ 8.87vw, kept
+     just under for rounding). max-width: none undoes style.css's 14ch. */
+  .hero h1 { font-size: 8.7vw; max-width: none; }
+
+  /* Buttons: one row, two equal halves across the content width */
+  .hero__cta { flex-wrap: nowrap; align-self: stretch; } /* .hero__text left-aligns children, which shrank the row */
+  .hero__cta .btn {
+    flex: 1 1 0;
+    justify-content: center;
+    padding-inline: 0.75rem;
+    font-size: clamp(0.72rem, 3.6vw, 0.95rem);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Fades and slides in after the loader (js/main.js) */
+  .js .hero__art { opacity: 0; }
+}
+
+/* Stat tiles: number bottom-aligned, label beneath */
+.stat {
+  align-self: stretch; /* equal heights in the row (.hero centres its items) */
+  justify-content: flex-end;
+  gap: 0.5rem;
+  min-height: 130px;
+}
+.stat__num { font-size: clamp(2rem, 4vw, 3rem); }
+@media (max-width: 639px) {
+  .stat { min-height: 0; padding: 1rem 0.75rem; }
+  .stat__num { font-size: 1.6rem; }
+  .stat__label { font-size: 0.7rem; letter-spacing: 0.06em; }
+}
+
+/* --------------------------------------------------------------------------
+   6. Section tiles
+   -------------------------------------------------------------------------- */
+.about__bio p { font-size: 1rem; }
+.about__skills h3 { margin-bottom: 0.9rem; }
+
+/* Experience: the timeline rail and dot are gone, the dash bullets stay */
+.tile.timeline__item,
+.tile.timeline__item:last-child { padding: var(--tile-pad); }
+.timeline__item::before { content: none; }
+.timeline__item h3 { font-size: 1.15rem; }
+
+/* Projects: the featured tile gets a bigger title */
+.project-card { min-height: 0; }
+.project-card--featured h3 { font-size: clamp(1.4rem, 2.2vw, 1.8rem); }
+@media (min-width: 1000px) {
+  .project-card--featured p { max-width: 52ch; font-size: 1rem; }
+}
+
+/* Contact: see §9 Contact panel */
+
+/* --------------------------------------------------------------------------
+   7. Footer as a slim tile
+   -------------------------------------------------------------------------- */
+.footer {
+  width: min(100% - 2 * var(--gutter), var(--max));
+  margin: 0 auto var(--gap);
+  padding: 1.1rem var(--tile-pad);
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-line);
+  border-radius: var(--radius);
+}
+.footer__inner { width: 100%; }
+
+/* --------------------------------------------------------------------------
+   8. Scroll progress (markup in index.html, positions from js/main.js)
+   JS writes --p (0-1) on the wrapper, translateY on the car and --at on
+   each sector. Mobile: 3px top bar. Desktop: car on a track at the right.
+   -------------------------------------------------------------------------- */
+.scroll-progress {
+  position: fixed;
+  inset: 0;
+  z-index: 90; /* under the nav (100) and loader (1000) */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.scroll-progress.is-visible { opacity: 1; }
+
+.scroll-progress__bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent-light);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+}
+.scroll-progress__track { display: none; }
+
+@media (min-width: 900px) {
+  .scroll-progress__bar { display: none; }
+  .scroll-progress__track {
+    display: block;
+    position: absolute;
+    top: 0; bottom: 0; right: 44px; /* clear of overlay scrollbars */
+    width: 2px;
+    background: #1f1f1f;
+  }
+}
+
+.scroll-progress__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent-light);
+  transform-origin: top;
+  transform: scaleY(var(--p, 0));
+}
+
+/* Zero-size anchor on the line; the car and readout hang off it */
+.scroll-progress__car {
+  position: absolute;
+  top: 0; left: 50%;
+  width: 0; height: 0;
+}
+.scroll-progress__car svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 12.4px; /* 36 × 400/1160 */
+  max-width: none; /* style.css caps svg at 100% of the zero-width anchor */
+  height: 36px;
+  color: var(--text);
+  overflow: visible;
+  transform: translate(-50%, -50%) rotate(180deg); /* sprite faces up; nose leads down */
+}
+.scroll-progress__readout {
+  display: none; /* only where the page margin is wide enough, see below */
+  position: absolute;
+  top: 0;
+  right: 18.2px; /* half the car's width + 12px */
+  transform: translateY(-50%);
+  font: 11px/1 var(--font-mono);
+  color: var(--accent-light);
+  white-space: nowrap;
+}
+/* The readout reaches ~90px in from the edge; the page margin is that wide from 1300px */
+@media (min-width: 1300px) {
+  .scroll-progress__readout { display: block; }
+}
+
+.scroll-progress__sector {
+  position: absolute;
+  top: 0; left: 50%;
+  width: 0; height: 0;
+  transform: translateY(var(--at, 0));
+}
+.scroll-progress__sector::before {
+  content: "";
+  position: absolute;
+  top: -0.5px; left: -4px;
+  width: 8px; height: 1px;
+  background: var(--muted);
+}
+.scroll-progress__sector span {
+  position: absolute;
+  top: 0; left: 14px; /* ~8px clear of the car's side */
+  transform: translateY(-50%);
+  font: 11px/1 var(--font-mono);
+  color: var(--muted);
+}
+.scroll-progress__sector.is-passed::before { background: var(--accent-light); }
+.scroll-progress__sector.is-passed span { color: var(--accent-light); }
+
+/* Short easing so the car and fill glide between frames; none for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-progress__car,
+  .scroll-progress__fill { transition: transform 0.1s linear; }
+}
+
+/* --------------------------------------------------------------------------
+   9. Contact panel
+   One rounded navy panel with blue corner glows and a faint top-down car.
+   The links sit straight on it with round icon badges; the form is an
+   inset frosted card (still a .tile, so it keeps a softer cursor glow).
+   Overrides the contact/form rules in style.css §11 for index.html only.
+   -------------------------------------------------------------------------- */
+.contact__panel {
+  grid-column: 1 / -1;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate; /* watermark (z -1) sits above the panel background */
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(2rem, 4vw, 4rem) var(--gap);
+  align-items: center;
+  padding: clamp(1.5rem, 4.5vw, 4rem);
+  border: 1px solid rgba(31, 111, 208, 0.22);
+  border-radius: 20px;
+  background:
+    radial-gradient(640px circle at 0% 0%, rgba(31, 111, 208, 0.42), transparent 62%),
+    radial-gradient(560px circle at 100% 100%, rgba(3, 70, 148, 0.6), transparent 60%),
+    #061229;
+}
+.contact__watermark {
+  position: absolute;
+  z-index: -1;
+  left: 14%;
+  bottom: -38%;
+  height: 130%;
+  width: auto;
+  max-width: none;
+  aspect-ratio: 400 / 1160;
+  color: var(--accent-light);
+  opacity: 0.1;
+  transform: rotate(-32deg);
+  pointer-events: none;
+}
+
+/* Links column */
+.contact__info { align-self: start; }
+#contact .contact__intro {
+  max-width: 40ch;
+  font-size: 1.05rem;
+  color: #c9ced8; /* lighter than --muted: readable over the top-left glow */
+}
+#contact .contact__links {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2.25rem;
+}
+#contact .contact__links li,
+#contact .contact__links li:last-child { border: 0; }
+#contact .contact__links a {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  padding: 0;
+  border-radius: 8px;
+}
+@media (hover: hover) {
+  #contact .contact__links a:hover { padding-left: 0; }
+}
+#contact .contact__links a:focus-visible {
+  outline: 2px solid var(--accent-light);
+  outline-offset: 4px;
+}
+.contact__badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(31, 111, 208, 0.15);
+  transition: box-shadow 0.25s ease;
+}
+.contact__badge svg { width: 20px; height: 20px; }
+.contact__text {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+#contact .contact__links .label {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #aab3c2;
+}
+#contact .contact__links .value {
+  font-size: 1.05rem;
+  color: var(--text);
+  word-break: normal;
+  overflow-wrap: anywhere;
+  transition: color 0.2s ease;
+}
+#contact .contact__links a:focus-visible .contact__badge {
+  box-shadow: 0 0 0 6px rgba(31, 111, 208, 0.25), 0 0 24px rgba(31, 111, 208, 0.45);
+}
+#contact .contact__links a:focus-visible .value { color: #7db4f2; }
+@media (hover: hover) {
+  #contact .contact__links a:hover .contact__badge {
+    box-shadow: 0 0 0 6px rgba(31, 111, 208, 0.25), 0 0 24px rgba(31, 111, 208, 0.45);
+  }
+  #contact .contact__links a:hover .value { color: #7db4f2; }
+}
+
+/* Form card */
+#contact .form.tile {
+  gap: 1.25rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  /* Mostly opaque so the panel glow doesn't brighten one corner; lands on
+     the same tone as the other tiles (--tile-bg on the page background). */
+  background: rgba(15, 27, 45, 0.85);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--tile-line);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --glow-a: 0.18;
+}
+#contact .form label {
+  margin-bottom: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+}
+#contact .form input,
+#contact .form textarea {
+  padding: 0.95rem 1.1rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#contact .form input::placeholder,
+#contact .form textarea::placeholder { color: rgba(245, 245, 245, 0.38); }
+#contact .form input:focus,
+#contact .form textarea:focus {
+  border-color: var(--accent-light);
+  box-shadow: 0 0 0 3px rgba(31, 111, 208, 0.28);
+}
+#contact .form textarea { min-height: 160px; }
+#contact .form .btn--primary {
+  width: 100%;
+  justify-content: center;
+  padding: 1rem;
+  border: 0;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light) 70%, #3f8ee8);
+  transition: filter 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+@media (hover: hover) {
+  #contact .form .btn--primary:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 8px 28px rgba(31, 111, 208, 0.35);
+  }
+}
+#contact .form .btn--primary:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+#contact .form__status {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+/* No empty row (and its grid gap) under the button until there's a status
+   to show. Absolute takes it out of the grid but keeps the live region
+   rendered, so the message is still announced when it arrives. */
+#contact .form__status:empty { position: absolute; }
+
+/* Tablet: stack, links first */
+@media (max-width: 999px) {
+  .contact__panel { grid-template-columns: repeat(6, 1fr); }
+  .contact__info { grid-column: span 6; }
+}
+@media (max-width: 639px) {
+  .contact__panel { padding: 1.25rem; border-radius: 16px; }
+  .contact__watermark { left: -10%; height: 90%; }
+  .contact__badge { width: 40px; height: 40px; }
+  /* No inner card on phones: the fields use the panel's full width */
+  #contact .form.tile {
+    padding: 0;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 0;
+    box-shadow: none;
+  }
+}

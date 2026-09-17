@@ -1,0 +1,994 @@
+<!doctype html>
+<!-- index.html: bento box layout. Layout rules live in css/bento.css, layered over css/style.css. The earlier angled-band layout is kept at legacy/index.html. -->
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Martin Dao — Python &amp; AI developer</title>
+        <meta
+            name="description"
+            content="Martin Dao is a Computer Science student at the University of Bath building the full stack in Python, React and TypeScript. Open to placements."
+        />
+        <meta name="theme-color" content="#0a0a0a" />
+        <meta
+            property="og:title"
+            content="Martin Dao — Python &amp; AI developer"
+        />
+        <meta
+            property="og:description"
+            content="Computer Science student at Bath building the full stack in Python, React and TypeScript. Open to placements."
+        />
+        <meta property="og:type" content="website" />
+        <link
+            rel="icon"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0a'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%231f6fd0'/%3E%3Ctext x='16' y='27' font-family='monospace' font-size='14' font-weight='700' fill='%23f5f5f5'%3EMD%3C/text%3E%3C/svg%3E"
+        />
+
+        <!-- Marks the document as JS-enabled (reveal styles apply) and flags that
+       the loader will run on every load, so the hero paints underneath it
+       (the curtain lift is the reveal). -->
+        <script>
+            document.documentElement.classList.add('js', 'has-loader');
+        </script>
+        <!-- On a refresh, always start at the top of this page: turn off the
+       browser's scroll restoration, drop any #hash so it can't jump to a
+       section, and pin the scroll position before first paint and on load.
+       Normal navigation (links, back/forward) is left alone. -->
+        <script>
+            (function () {
+                var nav =
+                    performance.getEntriesByType &&
+                    performance.getEntriesByType('navigation')[0];
+                var reload = nav
+                    ? nav.type === 'reload'
+                    : !!(
+                          performance.navigation &&
+                          performance.navigation.type === 1
+                      );
+                if (!reload) return;
+                if ('scrollRestoration' in history)
+                    history.scrollRestoration = 'manual';
+                if (location.hash)
+                    history.replaceState(
+                        null,
+                        '',
+                        location.pathname + location.search,
+                    );
+                function top() {
+                    try {
+                        window.scrollTo({
+                            top: 0,
+                            left: 0,
+                            behavior: 'instant',
+                        });
+                    } catch (e) {
+                        window.scrollTo(0, 0);
+                    }
+                }
+                top();
+                window.addEventListener('load', top);
+            })();
+        </script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <!-- Fonts load without blocking first paint: fetched as a print sheet, then
+       promoted to all media once downloaded. No-JS visitors get the noscript copy. -->
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap"
+            media="print"
+            onload="this.media = 'all'"
+        />
+        <noscript
+            ><link
+                rel="stylesheet"
+                href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap"
+        /></noscript>
+        <link rel="stylesheet" href="css/style.css" />
+        <!-- Bento layout: layered over style.css, overrides nav, hero and section rhythm -->
+        <link rel="stylesheet" href="css/bento.css" />
+
+        <script defer src="js/loader.js"></script>
+        <script
+            defer
+            src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+        ></script>
+        <script
+            defer
+            src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+        ></script>
+        <script defer src="js/main.js"></script>
+    </head>
+    <body>
+        <a class="skip-link" href="#main">Skip to content</a>
+
+        <!-- ====================================================================
+       Loader. Logic in js/loader.js; car SVG also kept at assets/car.svg.
+       Runs on every page load.
+       ==================================================================== -->
+        <div class="loader" id="loader" aria-hidden="true">
+            <div class="loader__text">
+                <p class="loader__name" data-name="MARTIN DAO"></p>
+                <p class="loader__role" data-name="SOFTWARE ENGINEER"></p>
+            </div>
+
+            <svg
+                class="loader__car"
+                viewBox="0 0 2540 420"
+                aria-hidden="true"
+                focusable="false"
+            >
+                <defs>
+                    <linearGradient
+                        id="trail"
+                        gradientUnits="userSpaceOnUse"
+                        x1="0"
+                        y1="0"
+                        x2="600"
+                        y2="0"
+                    >
+                        <stop
+                            offset="0"
+                            stop-color="#1f6fd0"
+                            stop-opacity="0"
+                        />
+                        <stop
+                            offset="1"
+                            stop-color="#1f6fd0"
+                            stop-opacity="0.7"
+                        />
+                    </linearGradient>
+                </defs>
+                <!-- Motion blur trail (x 0-600, to the left of the car) -->
+                <g
+                    class="trail"
+                    fill="none"
+                    stroke="url(#trail)"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                >
+                    <path d="M80 130H600" />
+                    <path d="M0 220H600" />
+                    <path d="M140 310H600" />
+                </g>
+                <!-- Car silhouette, 1972x413 native units, shifted right of the trail -->
+                <g transform="translate(560 0)">
+                    <g class="car-body" fill="currentColor">
+                        <!-- Rear wing: endplate + swept lower plate -->
+                        <path
+                            d="M95 75 L302 78 L302 150 L340 150 L340 245 L300 272 L180 336 L0 300 L0 238 Z"
+                        />
+                        <!-- Rear wing / engine cover slab -->
+                        <path
+                            d="M338 148 L840 40 L925 44 L905 118 L340 215 Z"
+                        />
+                        <!-- T-cam on top of the airbox -->
+                        <path
+                            d="M836 12 L922 12 L922 46 L904 46 L904 62 L858 62 L858 46 L836 46 Z"
+                        />
+                        <!-- Airbox, roll hoop and cockpit deck -->
+                        <path
+                            d="M838 40 L928 44 L970 100 L984 152 L1050 152 L1058 182 L1296 182 L1300 160 L1050 180 L960 120 L905 118 Z"
+                        />
+                        <!-- Lower body: sidepod, floor and nose -->
+                        <path
+                            d="M300 235 L390 228 L1050 180 L1300 160 L1420 165 L1560 200 L1692 248 Q1704 272 1700 300 L1600 306 L1450 330 L1420 388 L300 388 L250 360 Z"
+                        />
+                        <!-- Halo (band with hollow interior) -->
+                        <path
+                            fill-rule="evenodd"
+                            d="M1040 184 L1080 92 Q1088 80 1104 80 L1250 80 Q1276 80 1290 106 L1302 184 Z M1068 184 L1100 110 Q1104 104 1112 104 L1246 104 Q1262 104 1270 118 L1282 184 Z"
+                        />
+                        <!-- Halo centre pillar -->
+                        <rect x="1140" y="140" width="52" height="46" rx="10" />
+                        <!-- Front wing: upper flap, main plane, endplate -->
+                        <path
+                            d="M1692 248 L1945 318 L1945 336 L1730 318 L1700 300 Z"
+                        />
+                        <path d="M1705 346 L1945 346 L1945 388 L1700 388 Z" />
+                        <path
+                            d="M1930 322 L1958 252 L1972 258 L1972 388 L1930 388 Z"
+                        />
+
+                        <!-- Cut-outs, painted in the background colour -->
+                        <g class="cut" fill="var(--bg, #0a0a0a)">
+                            <rect x="250" y="80" width="10" height="88" />
+                            <!-- DRS slit -->
+                            <circle cx="1010" cy="120" r="33" />
+                            <!-- helmet -->
+                            <rect
+                                x="1064"
+                                y="204"
+                                width="46"
+                                height="90"
+                                rx="8"
+                            />
+                            <!-- mirror -->
+                            <path
+                                d="M1140 322 L1246 280 L1252 292 L1152 334 Z"
+                            />
+                            <!-- sidepod swoosh -->
+                            <path
+                                d="M1318 300 L1345 300 L1330 350 L1418 352 L1418 366 L1306 366 L1306 356 Z"
+                            />
+                            <!-- sidepod inlet -->
+                        </g>
+                        <!-- Gaps that separate the wheels from the bodywork -->
+                        <g
+                            class="cut"
+                            fill="none"
+                            stroke="var(--bg, #0a0a0a)"
+                            stroke-width="14"
+                        >
+                            <circle cx="265" cy="295" r="128" />
+                            <circle cx="1555" cy="290" r="130" />
+                        </g>
+
+                        <!-- Rear wheel -->
+                        <g class="wheel">
+                            <circle cx="265" cy="295" r="120" />
+                            <g
+                                class="cut"
+                                fill="none"
+                                stroke="var(--bg, #0a0a0a)"
+                                stroke-linecap="round"
+                            >
+                                <circle
+                                    cx="265"
+                                    cy="295"
+                                    r="78"
+                                    stroke-width="12"
+                                />
+                                <circle
+                                    cx="265"
+                                    cy="295"
+                                    r="16"
+                                    stroke-width="12"
+                                />
+                                <path
+                                    stroke-width="9"
+                                    d="M265 267V223 M265 323V367 M237 295H193 M293 295H337 M245 275L214 244 M285 315L316 346 M285 275L316 244 M245 315L214 346"
+                                />
+                            </g>
+                        </g>
+                        <!-- Front wheel -->
+                        <g class="wheel">
+                            <circle cx="1555" cy="290" r="122" />
+                            <g
+                                class="cut"
+                                fill="none"
+                                stroke="var(--bg, #0a0a0a)"
+                                stroke-linecap="round"
+                            >
+                                <circle
+                                    cx="1555"
+                                    cy="290"
+                                    r="80"
+                                    stroke-width="12"
+                                />
+                                <circle
+                                    cx="1555"
+                                    cy="290"
+                                    r="16"
+                                    stroke-width="12"
+                                />
+                                <path
+                                    stroke-width="9"
+                                    d="M1555 262V218 M1555 318V362 M1527 290H1483 M1583 290H1627 M1535 270L1504 239 M1575 310L1606 341 M1575 270L1606 239 M1535 310L1504 341"
+                                />
+                            </g>
+                        </g>
+
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Car silhouette sprite: shapes from assets/car.svg, drawn with <use href="#car-silhouette">.
+             Cut-outs are painted var(--bg); set --bg: transparent on the <use> for a solid silhouette. -->
+        <svg class="sprite" aria-hidden="true" focusable="false">
+            <symbol id="car-silhouette" viewBox="0 0 1972 413">
+                <g fill="currentColor">
+            <path d="M95 75 L302 78 L302 150 L340 150 L340 245 L300 272 L180 336 L0 300 L0 238 Z"/>
+            <path d="M338 148 L840 40 L925 44 L905 118 L340 215 Z"/>
+            <path d="M836 12 L922 12 L922 46 L904 46 L904 62 L858 62 L858 46 L836 46 Z"/>
+            <path d="M838 40 L928 44 L970 100 L984 152 L1050 152 L1058 182 L1296 182 L1300 160 L1050 180 L960 120 L905 118 Z"/>
+            <path d="M300 235 L390 228 L1050 180 L1300 160 L1420 165 L1560 200 L1692 248 Q1704 272 1700 300 L1600 306 L1450 330 L1420 388 L300 388 L250 360 Z"/>
+            <path fill-rule="evenodd" d="M1040 184 L1080 92 Q1088 80 1104 80 L1250 80 Q1276 80 1290 106 L1302 184 Z M1068 184 L1100 110 Q1104 104 1112 104 L1246 104 Q1262 104 1270 118 L1282 184 Z"/>
+            <rect x="1140" y="140" width="52" height="46" rx="10"/>
+            <path d="M1692 248 L1945 318 L1945 336 L1730 318 L1700 300 Z"/>
+            <path d="M1705 346 L1945 346 L1945 388 L1700 388 Z"/>
+            <path d="M1930 322 L1958 252 L1972 258 L1972 388 L1930 388 Z"/>
+            <g class="cut" fill="var(--bg, #0a0a0a)">
+            <rect x="250" y="80" width="10" height="88"/>
+            <circle cx="1010" cy="120" r="33"/>
+            <rect x="1064" y="204" width="46" height="90" rx="8"/>
+            <path d="M1140 322 L1246 280 L1252 292 L1152 334 Z"/>
+            <path d="M1318 300 L1345 300 L1330 350 L1418 352 L1418 366 L1306 366 L1306 356 Z"/>
+            </g>
+            <g class="cut" fill="none" stroke="var(--bg, #0a0a0a)" stroke-width="14">
+            <circle cx="265" cy="295" r="128"/>
+            <circle cx="1555" cy="290" r="130"/>
+            </g>
+            <g class="wheel">
+            <circle cx="265" cy="295" r="120"/>
+            <g class="cut" fill="none" stroke="var(--bg, #0a0a0a)" stroke-linecap="round">
+            <circle cx="265" cy="295" r="78" stroke-width="12"/>
+            <circle cx="265" cy="295" r="16" stroke-width="12"/>
+            <path stroke-width="9" d="M265 267V223 M265 323V367 M237 295H193 M293 295H337 M245 275L214 244 M285 315L316 346 M285 275L316 244 M245 315L214 346"/>
+            </g>
+            </g>
+            <g class="wheel">
+            <circle cx="1555" cy="290" r="122"/>
+            <g class="cut" fill="none" stroke="var(--bg, #0a0a0a)" stroke-linecap="round">
+            <circle cx="1555" cy="290" r="80" stroke-width="12"/>
+            <circle cx="1555" cy="290" r="16" stroke-width="12"/>
+            <path stroke-width="9" d="M1555 262V218 M1555 318V362 M1527 290H1483 M1583 290H1627 M1535 270L1504 239 M1575 310L1606 341 M1575 270L1606 239 M1535 310L1504 341"/>
+            </g>
+            </g>
+                </g>
+            </symbol>
+            <!-- Top-down car, nose up: shapes from assets/car-top.svg. Scroll progress marker. -->
+            <symbol id="car-top" viewBox="0 0 400 1160">
+                <g fill="currentColor">
+            <path d="M200 0 C222 0 232 14 232 40 L240 300 L256 440 L144 440 L160 300 L168 40 C168 14 178 0 200 0 Z"/>
+            <rect x="20" y="76" width="360" height="34" rx="6"/>
+            <path d="M30 108 L170 150 L230 150 L370 108 L370 170 L230 200 L170 200 L30 170 Z"/>
+            <rect x="4" y="70" width="24" height="126" rx="5"/>
+            <rect x="372" y="70" width="24" height="126" rx="5"/>
+            <rect x="2" y="204" width="80" height="141" rx="18"/>
+            <rect x="318" y="204" width="80" height="141" rx="18"/>
+            <path d="M78 250 L175 232 L176 246 L78 266 Z M78 290 L178 320 L178 336 L78 306 Z M322 250 L225 232 L224 246 L322 266 Z M322 290 L222 320 L222 336 L322 306 Z"/>
+            <path d="M144 440 L256 440 L268 470 C330 500 355 540 360 600 C362 650 340 700 312 780 L270 960 L230 1000 L170 1000 L130 960 L88 780 C60 700 38 650 40 600 C45 540 70 500 132 470 Z"/>
+            <circle cx="115" cy="472" r="16"/>
+            <circle cx="285" cy="472" r="16"/>
+            <path d="M44 640 L62 640 L66 905 L46 905 Z M356 640 L338 640 L334 905 L354 905 Z"/>
+            <rect x="5" y="900" width="90" height="150" rx="20"/>
+            <rect x="305" y="900" width="90" height="150" rx="20"/>
+            <rect x="176" y="980" width="48" height="60" rx="6"/>
+            <path d="M90 955 L182 995 L182 1009 L90 971 Z M90 1015 L182 1022 L182 1036 L90 1031 Z M310 955 L218 995 L218 1009 L310 971 Z M310 1015 L218 1022 L218 1036 L310 1031 Z"/>
+            <rect x="110" y="1010" width="180" height="90" rx="4"/>
+            <path d="M116 1100 L132 1100 L128 1160 L122 1160 Z M284 1100 L268 1100 L272 1160 L278 1160 Z"/>
+                </g>
+            </symbol>
+            <!-- Contact badge icons (24×24, currentColor) -->
+            <symbol id="icon-github" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+            </symbol>
+            <symbol id="icon-linkedin" viewBox="0 0 24 24">
+                <g fill="currentColor">
+                    <rect x="3" y="9" width="4" height="12" rx="0.5"/>
+                    <circle cx="5" cy="4.6" r="2.2"/>
+                    <path d="M10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.5c0-1.3-.02-3-1.83-3-1.83 0-2.11 1.43-2.11 2.9V21H10z"/>
+                </g>
+            </symbol>
+            <symbol id="icon-mail" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                    <path d="M3.5 6.5 12 13l8.5-6.5"/>
+                </g>
+            </symbol>
+        </svg>
+
+        <!-- Scroll progress: desktop car on a track with S1-S3 sector ticks,
+             mobile 3px top bar. Styles in css/bento.css, driven by js/main.js.
+             Decorative; sector entries are announced via [data-scroll-status]. -->
+        <div class="scroll-progress" aria-hidden="true">
+            <div class="scroll-progress__track">
+                <div class="scroll-progress__fill"></div>
+                <div class="scroll-progress__sector" data-sector="about" data-label="Sector 1: About"><span>S1</span></div>
+                <div class="scroll-progress__sector" data-sector="experience" data-label="Sector 2: Experience"><span>S2</span></div>
+                <div class="scroll-progress__sector" data-sector="projects" data-label="Sector 3: Projects"><span>S3</span></div>
+                <div class="scroll-progress__car">
+                    <svg viewBox="0 0 400 1160" focusable="false"><use href="#car-top"/></svg>
+                    <span class="scroll-progress__readout">0%</span>
+                </div>
+            </div>
+            <div class="scroll-progress__bar"></div>
+        </div>
+        <p class="visually-hidden" aria-live="polite" data-scroll-status></p>
+
+        <!-- ====================================================================
+       Nav
+       ==================================================================== -->
+        <header class="nav">
+            <div class="container nav__inner">
+                <a class="nav__logo nav__logo--name" href="#top">
+                    <span class="nav__logo-text">Martin Dao</span>
+                    <span class="visually-hidden">, home</span>
+                </a>
+                <button
+                    class="nav__toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="nav-links"
+                    aria-label="Toggle menu"
+                >
+                    <span></span><span></span>
+                </button>
+                <nav aria-label="Primary">
+                    <ul class="nav__links" id="nav-links">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#experience">Experience</a></li>
+                        <li><a href="#projects">Projects</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main id="main">
+            <!-- ==================================================================
+         Bento grid. One 12-column grid; each section is a full-width group
+         that is itself a 12-column grid with the same gap, so every tile
+         lines up. Column spans: span-N desktop, md-N tablet (6 cols),
+         sm-N phone (6 cols). Layout rules live in css/bento.css.
+         ================================================================== -->
+            <!-- data-glow: every .tile inside gets the cursor-following glow (js/main.js) -->
+            <div class="container bento" data-glow>
+                <!-- Hero: headline tile, car tile, three stat tiles -->
+                <section class="bento__group hero" id="top" data-hero>
+                    <!-- Open row: headline beside the helmet, centred in the first screen. -->
+                    <div class="hero__stage span-12">
+                    <div class="hero__text span-7" data-reveal>
+                        <span class="pill">Open to placements</span>
+                        <h1>Python &amp; AI developer</h1>
+                        <p class="hero__sub">
+                            Second-year Computer Science student at Bath. I
+                            build simulators and data tools in Python, and I'm
+                            learning to ship the front end too.
+                        </p>
+                        <div class="hero__cta">
+                            <a class="btn btn--primary" href="#projects"
+                                >See projects</a
+                            >
+                            <a class="btn btn--ghost" href="#contact"
+                                >Get in touch</a
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Hero visual: the helmet from assets/helmet.svg, inlined so the
+           "MD" on the chin picks up the page font. Sits open on the page (no
+           tile); fade-in, parallax and the cursor glow live in js/main.js. -->
+                    <div class="hero__visual span-5" aria-hidden="true" data-reveal>
+                        <svg
+                            class="hero__svg hero__svg--helmet"
+                            viewBox="100 40 600 710"
+                            focusable="false"
+                        >
+                            <g class="hero__art">
+                            <defs>
+                            <path id="shell" d="M651.0,178.0 C642.7,165.8 624.8,162.5 610.0,156.0 C595.2,149.5 581.5,147.7 562.0,139.0 C542.5,130.3 515.0,112.0 493.0,104.0 C471.0,96.0 448.3,93.3 430.0,91.0 C411.7,88.7 398.3,89.0 383.0,90.0 C367.7,91.0 353.8,92.3 338.0,97.0 C322.2,101.7 301.8,110.7 288.0,118.0 C274.2,125.3 264.7,133.0 255.0,141.0 C245.3,149.0 237.3,157.5 230.0,166.0 C222.7,174.5 217.5,180.7 211.0,192.0 C204.5,203.3 197.0,217.7 191.0,234.0 C185.0,250.3 180.0,279.5 175.0,290.0 C170.0,300.5 166.3,277.7 161.0,297.0 C155.7,316.3 147.2,385.3 143.0,406.0 C138.8,426.7 137.7,413.2 136.0,421.0 C134.3,428.8 131.7,437.0 133.0,453.0 C134.3,469.0 140.2,499.3 144.0,517.0 C147.8,534.7 151.0,544.8 156.0,559.0 C161.0,573.2 168.5,593.0 174.0,602.0 C179.5,611.0 182.0,610.2 189.0,613.0 C196.0,615.8 204.2,618.2 216.0,619.0 C227.8,619.8 245.0,619.7 260.0,618.0 C275.0,616.3 288.2,611.5 306.0,609.0 C323.8,606.5 354.7,605.5 367.0,603.0 C379.3,600.5 353.2,602.3 380.0,594.0 C406.8,585.7 493.8,564.2 528.0,553.0 C562.2,541.8 571.5,537.5 585.0,527.0 C598.5,516.5 599.8,499.5 609.0,490.0 C618.2,480.5 633.7,475.3 640.0,470.0 C646.3,464.7 647.2,466.8 647.0,458.0 C646.8,449.2 638.3,431.3 639.0,417.0 C639.7,402.7 648.3,388.2 651.0,372.0 C653.7,355.8 653.0,333.0 655.0,320.0 C657.0,307.0 662.2,309.2 663.0,294.0 C663.8,278.8 662.0,248.3 660.0,229.0 C658.0,209.7 659.3,190.2 651.0,178.0 Z"/>
+                            <path id="visor" d="M469.0,292.0 C515.7,311.5 471.2,381.8 469.0,407.0 C466.8,432.2 500.8,437.8 456.0,443.0 C411.2,448.2 248.7,440.0 200.0,438.0 C151.3,436.0 172.7,433.5 164.0,431.0 C155.3,428.5 151.3,425.3 148.0,423.0 C144.7,420.7 142.3,432.3 144.0,417.0 C145.7,401.7 150.5,352.2 158.0,331.0 C165.5,309.8 137.2,296.5 189.0,290.0 C240.8,283.5 422.3,272.5 469.0,292.0 Z"/>
+                            <clipPath id="clip"><use href="#shell"/></clipPath>
+                            <clipPath id="vclip"><use href="#visor"/></clipPath>
+
+                            <radialGradient id="whiteShade" cx="0.28" cy="0.4" r="0.9">
+                            <stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#f4f6f9"/>
+                            <stop offset="0.8" stop-color="#d3d9e1"/><stop offset="1" stop-color="#9ea8b5"/>
+                            </radialGradient>
+                            <linearGradient id="whiteVert" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.75" stop-color="#8d97a5" stop-opacity="0"/>
+                            <stop offset="1" stop-color="#6e7887" stop-opacity="0.55"/>
+                            </linearGradient>
+                            <radialGradient id="blueShade" cx="0.3" cy="0.2" r="1">
+                            <stop offset="0" stop-color="#4a9cff"/><stop offset="0.35" stop-color="#1467c8"/>
+                            <stop offset="0.7" stop-color="#03408a"/><stop offset="1" stop-color="#011a3b"/>
+                            </radialGradient>
+                            <linearGradient id="blueRight" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="0.7" stop-color="#000" stop-opacity="0"/>
+                            <stop offset="1" stop-color="#000" stop-opacity="0.55"/>
+                            </linearGradient>
+                            <linearGradient id="visorG" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#9fe3ff"/><stop offset="0.18" stop-color="#2a5f9e"/>
+                            <stop offset="0.4" stop-color="#0b1c33"/><stop offset="0.62" stop-color="#08121f"/>
+                            <stop offset="0.82" stop-color="#1c3f6c"/><stop offset="1" stop-color="#6aa9e6"/>
+                            </linearGradient>
+                            <linearGradient id="visorSheen" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#e8f7ff" stop-opacity="0.85"/><stop offset="0.35" stop-color="#bfe4ff" stop-opacity="0.15"/>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+                            </linearGradient>
+                            <linearGradient id="visorWarm" x1="0" y1="1" x2="1" y2="0">
+                            <stop offset="0" stop-color="#ffb347" stop-opacity="0"/><stop offset="0.5" stop-color="#ffc46b" stop-opacity="0.22"/>
+                            <stop offset="1" stop-color="#ffd27a" stop-opacity="0"/>
+                            </linearGradient>
+                            <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#ffffff"/><stop offset="0.35" stop-color="#c9d2dc"/>
+                            <stop offset="0.55" stop-color="#7a8695"/><stop offset="0.8" stop-color="#e3e9ef"/><stop offset="1" stop-color="#9aa5b2"/>
+                            </linearGradient>
+                            <linearGradient id="rubber" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#3a414b"/><stop offset="0.5" stop-color="#151a21"/><stop offset="1" stop-color="#05070a"/>
+                            </linearGradient>
+                            <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#fff" stop-opacity="0.95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+                            </linearGradient>
+                            <radialGradient id="ground" cx="0.5" cy="0.5" r="0.5">
+                            <stop offset="0" stop-color="#000" stop-opacity="0.6"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+                            </radialGradient>
+                            <filter id="b4"><feGaussianBlur stdDeviation="4"/></filter>
+                            <filter id="b8"><feGaussianBlur stdDeviation="8"/></filter>
+                            <filter id="b14"><feGaussianBlur stdDeviation="14"/></filter>
+                            <filter id="b2"><feGaussianBlur stdDeviation="1.5"/></filter>
+                            <!-- arc for the name across the brow -->
+                            <path id="browArc" d="M195 292 C280 258 410 250 530 272"/>
+                            </defs>
+
+                            <ellipse cx="400" cy="700" rx="240" ry="36" fill="url(#ground)"/>
+
+                            <!-- base shell -->
+                            <use href="#shell" fill="url(#whiteShade)"/>
+                            <use href="#shell" fill="url(#whiteVert)"/>
+
+                            <g clip-path="url(#clip)">
+                            <!-- blue crown -->
+                            <path d="M100 60 L760 60 L760 380 C720 400 690 420 655 445
+                            L600 385 C580 355 560 330 540 312
+                            C450 300 300 305 120 335 L100 300 Z" fill="url(#blueShade)"/>
+                            <path d="M760 380 L760 700 L660 700 C630 640 610 560 620 500 C625 470 640 455 660 440 Z" fill="url(#blueShade)"/>
+                            <!-- ambient shading: right side turning away, underside -->
+                            <path d="M540 60 L760 60 L760 700 L640 700 C560 520 560 300 540 60 Z" fill="url(#blueRight)" filter="url(#b8)"/>
+                            <path d="M120 300 L200 300 L200 660 L120 660 Z" fill="#000" opacity="0.14" filter="url(#b8)"/>
+                            <path d="M120 585 L720 585 L720 660 L120 660 Z" fill="#1c2632" opacity="0.35" filter="url(#b14)"/>
+
+                            <!-- crown highlights -->
+                            <ellipse cx="335" cy="150" rx="165" ry="58" fill="url(#gloss)" opacity="0.55"/>
+                            <path d="M225 118 C320 86 460 84 585 122" fill="none" stroke="#fff" stroke-width="3" opacity="0.7" filter="url(#b2)"/>
+                            <path d="M660 250 C690 320 690 420 660 470" fill="none" stroke="#9fd0ff" stroke-width="4" opacity="0.45" filter="url(#b4)"/>
+                            <!-- white stripe over the crown -->
+                            <path d="M222 152 C320 100 470 92 592 132" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+                            <path d="M222 165 C320 113 470 105 592 145" fill="none" stroke="#a9dcff" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M222 140 C320 88 470 80 592 120" fill="none" stroke="#dff2ff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+
+                            <!-- livery pinstripes -->
+                            <path d="M110 330 C300 300 450 296 542 306 L600 380 L658 442" fill="none" stroke="#a9dcff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M110 340 C300 310 450 306 546 316 L604 388" fill="none" stroke="#fff" stroke-width="2" opacity="0.7" stroke-linecap="round"/>
+                            <path d="M665 452 C640 480 622 530 625 590 C628 630 640 665 655 700" fill="none" stroke="#a9dcff" stroke-width="6"/>
+                            <path d="M654 452 C630 480 612 530 615 590" fill="none" stroke="#fff" stroke-width="2" opacity="0.6"/>
+
+                            <!-- shell seam under the brow -->
+                            <path d="M150 455 C300 450 420 452 470 460" fill="none" stroke="#b5bec9" stroke-width="1.5" opacity="0.7"/>
+
+                            <!-- rear vents with depth -->
+                            <g transform="rotate(-42 625 258)">
+                            <g fill="#021733"><rect x="592" y="224" width="60" height="9" rx="4.5"/><rect x="605" y="248" width="60" height="9" rx="4.5"/><rect x="618" y="272" width="60" height="9" rx="4.5"/></g>
+                            <g fill="none" stroke="#7fb8f0" stroke-width="1.2" opacity="0.6"><rect x="592" y="224" width="60" height="9" rx="4.5"/><rect x="605" y="248" width="60" height="9" rx="4.5"/><rect x="618" y="272" width="60" height="9" rx="4.5"/></g>
+                            </g>
+                            <!-- chin vents -->
+                            <g>
+                            <g fill="#8c96a4"><rect x="206" y="472" width="56" height="8" rx="4"/><rect x="206" y="488" width="56" height="8" rx="4"/><rect x="206" y="504" width="56" height="8" rx="4"/></g>
+                            <g fill="none" stroke="#fff" stroke-width="1" opacity="0.8"><rect x="206" y="472" width="56" height="8" rx="4"/><rect x="206" y="488" width="56" height="8" rx="4"/><rect x="206" y="504" width="56" height="8" rx="4"/></g>
+                            </g>
+                            <!-- title on the chin bar, slanted -->
+                            <g transform="translate(345 520) rotate(-6) skewX(-8)">
+                            <text font-family="Space Grotesk, Inter, Arial, sans-serif" font-weight="800" font-size="64" fill="#034694" letter-spacing="1" y="22">MD</text>
+                            </g>
+
+                            <!-- bottom rubber trim -->
+                            <use href="#shell" fill="none" stroke="url(#rubber)" stroke-width="16" clip-path="url(#trimclip)"/>
+                            <use href="#shell" fill="none" stroke="#4d5662" stroke-width="2" opacity="0.6" clip-path="url(#trimclip)" transform="translate(0 -6)"/>
+                            </g>
+                            <clipPath id="trimclip"><rect x="120" y="560" width="600" height="110"/></clipPath>
+
+                            <!-- visor recess shadow -->
+                            <use href="#visor" fill="#000" opacity="0.45" filter="url(#b8)" transform="translate(0 8)"/>
+                            <!-- visor rim + glass -->
+                            <use href="#visor" fill="#06101c" stroke="#06101c" stroke-width="8" stroke-linejoin="round"/>
+                            <use href="#visor" fill="url(#visorG)"/>
+                            <g clip-path="url(#vclip)">
+                            <path d="M140 285 L480 285 L480 335 L140 355 Z" fill="url(#visorSheen)"/>
+                            <use href="#visor" fill="url(#visorWarm)"/>
+                            <path d="M300 300 C380 292 440 296 480 320 L480 420 C420 380 350 330 300 300 Z" fill="#fff" opacity="0.06"/>
+                            <path d="M170 330 C250 306 380 296 468 302" fill="none" stroke="#e6f6ff" stroke-width="4" opacity="0.8" stroke-linecap="round"/>
+                            <path d="M185 410 L440 420" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.25"/>
+                            <path d="M160 300 L200 300 L150 440 L140 440 Z" fill="#fff" opacity="0.08"/>
+                            </g>
+                            <use href="#visor" fill="none" stroke="#4e6b8c" stroke-width="1.5" opacity="0.7"/>
+                            <!-- tear-off tab -->
+                            <path d="M148 318 L126 326 L128 348 L150 342 Z" fill="url(#chrome)"/>
+
+                            <!-- pivot arm + mechanism -->
+                            <path d="M455 420 C480 424 500 400 505 375" fill="none" stroke="#6f7b89" stroke-width="8" stroke-linecap="round"/>
+                            <path d="M455 420 C480 424 500 400 505 375" fill="none" stroke="#e5ebf1" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+                            <circle cx="500" cy="352" r="27" fill="#0b1520" opacity="0.5" filter="url(#b4)"/>
+                            <circle cx="500" cy="352" r="25" fill="url(#chrome)"/>
+                            <circle cx="500" cy="352" r="25" fill="none" stroke="#3f4954" stroke-width="1.5"/>
+                            <circle cx="500" cy="352" r="16" fill="#034694"/>
+                            <circle cx="500" cy="352" r="16" fill="none" stroke="#7fb8f0" stroke-width="1"/>
+                            <circle cx="500" cy="352" r="6" fill="#e8eef4"/>
+                            <path d="M497 352 L503 352" stroke="#2b3440" stroke-width="1.5"/>
+                            <!-- small screw on the crown -->
+                            <circle cx="586" cy="330" r="6" fill="url(#chrome)"/><circle cx="586" cy="330" r="2" fill="#2b3440"/>
+                            </g>
+                        </svg>
+                        <p class="hero__caption">LAP 01 · SECTOR 2 · #034694</p>
+                    </div>
+                    </div>
+
+                    <div class="tile stat span-4 md-2 sm-2" data-reveal>
+                        <span class="stat__num"
+                            ><span data-count="159">0</span
+                            ><span class="suffix">+</span></span
+                        >
+                        <span class="stat__label">tests shipped</span>
+                    </div>
+                    <div class="tile stat span-4 md-2 sm-2" data-reveal>
+                        <span class="stat__num"
+                            ><span data-count="2">0</span></span
+                        >
+                        <span class="stat__label">live projects</span>
+                    </div>
+                    <div class="tile stat span-4 md-2 sm-2" data-reveal>
+                        <span class="stat__num"
+                            ><span data-count="1">0</span></span
+                        >
+                        <span class="stat__label">F1 obsession</span>
+                    </div>
+                </section>
+
+                <!-- ==================================================================
+         [01] About
+         ================================================================== -->
+                <section class="bento__group" id="about">
+                                        <header class="section-banner" data-reveal>
+                        <svg class="section-banner__car" aria-hidden="true" focusable="false"><use href="#car-silhouette" /></svg>
+                        <span class="section-tag">01</span>
+                        <h2 class="section-banner__title">All About Me</h2>
+                    </header>
+
+                    <div class="tile about__bio span-8" data-reveal>
+                        <p>
+                            I'm a second-year Computer Science student at the
+                            University of Bath, on the placement course, with a
+                            first predicted after year one. I write Python for
+                            things that need to be right. The last two were a
+                            lap by lap F1 race simulator with a seeded engine,
+                            and a Fantasy Premier League assistant that trains
+                            Random Forest models and answers questions through
+                            a LangChain agent.
+                        </p>
+                        <p>
+                            Both projects have a front end now, one in React and
+                            TypeScript, one in Streamlit, because I would rather
+                            learn the whole stack than hand the interesting half
+                            to someone else. At uni I ran the Scrum side of a
+                            ten-person team project, and I still lose Sunday
+                            afternoons to F1. I'm looking for a placement year.
+                        </p>
+                    </div>
+
+                    <div class="tile about__skills span-4" data-reveal>
+                        <h3>Toolkit</h3>
+                        <ul class="chips" aria-label="Skills">
+                            <li class="chip">Python</li>
+                            <li class="chip">FastAPI</li>
+                            <li class="chip">pytest</li>
+                            <li class="chip">mypy</li>
+                            <li class="chip">React</li>
+                            <li class="chip">TypeScript</li>
+                            <li class="chip">SQL</li>
+                            <li class="chip">scikit-learn</li>
+                            <li class="chip">LangChain</li>
+                            <li class="chip">Streamlit</li>
+                            <li class="chip">Java</li>
+                            <li class="chip">Git</li>
+                        </ul>
+                    </div>
+
+                    <article class="tile card span-4 md-2" data-reveal>
+                        <span class="card__idx">01</span>
+                        <h3>Ships tested code</h3>
+                        <p>
+                            159 pytest cases and mypy --strict on the last
+                            project. If it isn't tested, it isn't finished.
+                        </p>
+                    </article>
+                    <article class="tile card span-4 md-2" data-reveal>
+                        <span class="card__idx">02</span>
+                        <h3>Simulates before guessing</h3>
+                        <p>
+                            Monte Carlo over hunches. Five hundred sampled races
+                            beat one strong opinion.
+                        </p>
+                    </article>
+                    <article class="tile card span-4 md-2" data-reveal>
+                        <span class="card__idx">03</span>
+                        <h3>Learning full stack in public</h3>
+                        <p>
+                            React, TypeScript and Vite, one commit at a time.
+                            The repo is open, the mistakes included.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- ==================================================================
+         [02] Experience
+         ================================================================== -->
+                <section class="bento__group" id="experience">
+                                        <header class="section-banner" data-reveal>
+                        <svg class="section-banner__car" aria-hidden="true" focusable="false"><use href="#car-silhouette" /></svg>
+                        <span class="section-tag">02</span>
+                        <h2 class="section-banner__title">My Experience</h2>
+                    </header>
+
+                    <article class="tile timeline__item span-12" data-reveal>
+                        <span class="timeline__date">2025 to 2029</span>
+                        <h3>
+                            BSc (Hons) Computer Science with Professional
+                            Placement
+                        </h3>
+                        <span class="timeline__org">University of Bath</span>
+                        <ul>
+                            <li>
+                                First-class average in year one, and a first
+                                predicted overall.
+                            </li>
+                            <li>
+                                Year one: AI (search, predicate logic and a
+                                sudoku solver in Python), SQL database design,
+                                Java and Haskell, and C on an Arduino parking
+                                sensor.
+                            </li>
+                            <li>
+                                Year two: Machine Learning, Algorithms and
+                                Complexity, Cybersecurity, Software Engineering,
+                                HCI, Visual Computing and Advanced Programming.
+                            </li>
+                        </ul>
+                    </article>
+                    <article class="tile timeline__item span-6 md-3" data-reveal>
+                        <span class="timeline__date">2026</span>
+                        <h3>Scrum lead, Personal Informatics team project</h3>
+                        <span class="timeline__org"
+                            >University of Bath · team of ten</span
+                        >
+                        <ul>
+                            <li>
+                                Two-month build of a web app that tracks sleep,
+                                screen time and stress, with each member's
+                                component integrated through GitHub.
+                            </li>
+                            <li>
+                                Ran the sprint tracker, burndown charts and
+                                product backlog, and re-planned sprints when
+                                blockers and requirement changes came up.
+                            </li>
+                        </ul>
+                    </article>
+                    <article class="tile timeline__item span-6 md-3" data-reveal>
+                        <span class="timeline__date">2023 to 2025</span>
+                        <h3>A levels</h3>
+                        <span class="timeline__org">St Ignatius College</span>
+                        <ul>
+                            <li>
+                                A* in Further Mathematics, Mathematics, Computer
+                                Science and the EPQ.
+                            </li>
+                            <li>
+                                EPQ dissertation on whether officiating
+                                technology such as Hawk-Eye and VAR has been good
+                                for football.
+                            </li>
+                        </ul>
+                    </article>
+                </section>
+
+                <!-- ==================================================================
+         [03] Projects
+         ================================================================== -->
+                <section class="bento__group" id="projects">
+                                        <header class="section-banner" data-reveal>
+                        <svg class="section-banner__car" aria-hidden="true" focusable="false"><use href="#car-silhouette" /></svg>
+                        <span class="section-tag">03</span>
+                        <h2 class="section-banner__title">My Projects</h2>
+                    </header>
+
+                    <article class="tile card project-card project-card--featured span-12" data-reveal>
+                        <span class="card__idx">P-01</span>
+                        <h3>
+                            <a href="projects/f1-strategy-sim.html"
+                                >F1 Strategy Sim</a
+                            >
+                        </h3>
+                        <p>
+                            Browser-based F1 race strategy game. Pick a car and
+                            grid slot, race a 20-car field lap by lap, and make
+                            the calls when it rains, when a safety car comes
+                            out, when to pit.
+                        </p>
+                        <ul class="chips" aria-label="Tags">
+                            <li class="chip">Python</li>
+                            <li class="chip">FastAPI</li>
+                            <li class="chip">React</li>
+                            <li class="chip">TypeScript</li>
+                            <li class="chip">Monte Carlo</li>
+                        </ul>
+                        <span class="project-card__more" aria-hidden="true"
+                            >Read more →</span
+                        >
+                    </article>
+
+                    <article class="tile card project-card span-6 md-3" data-reveal>
+                        <span class="card__idx">P-02</span>
+                        <h3>
+                            <a href="projects/fpl.html">FPL AI Assistant</a>
+                        </h3>
+                        <p>
+                            Pulls FPL, Understat and football-data.org into one
+                            SQLite database, trains four position-specific
+                            Random Forest models to predict next-gameweek
+                            points, and answers questions about it all through
+                            a LangChain SQL agent in Streamlit.
+                        </p>
+                        <ul class="chips" aria-label="Tags">
+                            <li class="chip">Python</li>
+                            <li class="chip">scikit-learn</li>
+                            <li class="chip">SQL</li>
+                            <li class="chip">LangChain</li>
+                            <li class="chip">Streamlit</li>
+                        </ul>
+                        <span class="project-card__more" aria-hidden="true"
+                            >Read more →</span
+                        >
+                    </article>
+
+                    <article class="tile card project-card span-6 md-3" data-reveal>
+                        <span class="card__idx">P-03</span>
+                        <h3>
+                            <a href="projects/project-3.html"
+                                >Personal Informatics App</a
+                            >
+                        </h3>
+                        <p>
+                            Ten-person university team project: a web app that
+                            tracks sleep, screen time and stress. I ran the
+                            Scrum side, from sprint planning to the burndown
+                            charts.
+                        </p>
+                        <ul class="chips" aria-label="Tags">
+                            <li class="chip">Agile/Scrum</li>
+                            <li class="chip">Full stack</li>
+                            <li class="chip">Team of 10</li>
+                        </ul>
+                        <span class="project-card__more" aria-hidden="true"
+                            >Read more →</span
+                        >
+                    </article>
+                </section>
+
+                <!-- ==================================================================
+         [04] Contact
+         ================================================================== -->
+                <section class="bento__group" id="contact">
+                                        <header class="section-banner" data-reveal>
+                        <svg class="section-banner__car" aria-hidden="true" focusable="false"><use href="#car-silhouette" /></svg>
+                        <span class="section-tag">04</span>
+                        <h2 class="section-banner__title">Radio check.</h2>
+                    </header>
+
+                    <!-- One navy panel: links on the left, frosted form card on the right.
+                         Styles in css/bento.css §9. -->
+                    <div class="contact__panel">
+                        <svg class="contact__watermark" aria-hidden="true" focusable="false"><use href="#car-top" /></svg>
+
+                        <div class="contact__info span-5" data-reveal>
+                            <p class="contact__intro">
+                                Hiring, collaborating, or just want to argue about
+                                pit windows? Pick a channel.
+                            </p>
+                            <ul class="contact__links">
+                                <li>
+                                    <a
+                                        href="https://github.com/DaoMartin23"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        <span class="contact__badge" aria-hidden="true"><svg focusable="false"><use href="#icon-github" /></svg></span>
+                                        <span class="contact__text">
+                                            <span class="label">GitHub</span>
+                                            <span class="value">github.com/DaoMartin23</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="https://www.linkedin.com/in/martin-dao-119452272"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        <span class="contact__badge" aria-hidden="true"><svg focusable="false"><use href="#icon-linkedin" /></svg></span>
+                                        <span class="contact__text">
+                                            <span class="label">LinkedIn</span>
+                                            <span class="value">linkedin.com/in/martin-dao-119452272</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="mailto:md2516@bath.ac.uk">
+                                        <span class="contact__badge" aria-hidden="true"><svg focusable="false"><use href="#icon-mail" /></svg></span>
+                                        <span class="contact__text">
+                                            <span class="label">Email</span>
+                                            <span class="value">md2516@bath.ac.uk</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- [PLACEHOLDER: replace PLACEHOLDER_FORM_ID with your Formspree form id] -->
+                        <form
+                            class="tile form span-7"
+                            data-enhance
+                            action="https://formspree.io/f/PLACEHOLDER_FORM_ID"
+                            method="POST"
+                            data-reveal
+                        >
+                            <div class="form__row">
+                                <div>
+                                    <label for="name">Name</label>
+                                    <input
+                                        id="name"
+                                        name="name"
+                                        type="text"
+                                        autocomplete="name"
+                                        enterkeyhint="next"
+                                        placeholder="Your name"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label for="email">Email</label>
+                                    <input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        autocomplete="email"
+                                        enterkeyhint="next"
+                                        placeholder="you@email.com"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label for="message">Message</label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    placeholder="Tell me about the role, the project, or your pit strategy…"
+                                    required
+                                ></textarea>
+                            </div>
+                            <div class="hp" aria-hidden="true">
+                                <label for="gotcha">Leave this empty</label>
+                                <input
+                                    id="gotcha"
+                                    name="_gotcha"
+                                    type="text"
+                                    tabindex="-1"
+                                    autocomplete="off"
+                                />
+                            </div>
+                            <div>
+                                <button class="btn btn--primary" type="submit">
+                                    Send message
+                                </button>
+                            </div>
+                            <p
+                                class="form__status"
+                                role="status"
+                                aria-live="polite"
+                            ></p>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container footer__inner">
+                <span>© <span data-year>2026</span> Martin Dao</span>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FPL AI Assistant — Martin Dao</title>
+  <meta name="description" content="Fantasy Premier League assistant: three data sources merged into SQLite, four position-specific Random Forest models, and a LangChain SQL agent in Streamlit.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0a'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%231f6fd0'/%3E%3Ctext x='16' y='27' font-family='monospace' font-size='14' font-weight='700' fill='%23f5f5f5'%3EMD%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.add('js');</script>
+  <!-- On a refresh, always start at the top of this page: turn off the
+       browser's scroll restoration, drop any #hash so it can't jump to a
+       section, and pin the scroll position before first paint and on load.
+       Normal navigation (links, back/forward) is left alone. -->
+  <script>
+    (function () {
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var reload = nav ? nav.type === 'reload'
+                       : !!(performance.navigation && performance.navigation.type === 1);
+      if (!reload) return;
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      function top() {
+        try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }
+        catch (e) { window.scrollTo(0, 0); }
+      }
+      top();
+      window.addEventListener('load', top);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts load without blocking first paint: fetched as a print sheet, then
+       promoted to all media once downloaded. No-JS visitors get the noscript copy. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap"></noscript>
+  <link rel="stylesheet" href="../css/style.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__logo nav__logo--name" href="../index.html">
+        <span class="nav__logo-text">Martin Dao</span>
+        <span class="visually-hidden">, home</span>
+      </a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <span></span><span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav__links" id="nav-links">
+          <li><a href="../index.html#about">About</a></li>
+          <li><a href="../index.html#experience">Experience</a></li>
+          <li><a href="../index.html#projects" aria-current="true">Projects</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero" data-hero>
+      <div class="container">
+        <a class="back-link" href="../index.html#projects" data-reveal>← All projects</a>
+        <h1 data-reveal>FPL AI Assistant</h1>
+        <p class="project-hero__lede" data-reveal>Collects Fantasy Premier League and Premier League data from three sources, merges it into one SQLite database, trains a Random Forest model per position to predict each player's points for the next gameweek, and puts a chatbot in front of it.</p>
+        <div class="project-hero__meta" data-reveal>
+          <ul class="chips" aria-label="Tags">
+            <li class="chip">Python</li>
+            <li class="chip">scikit-learn</li>
+            <li class="chip">SQL</li>
+            <li class="chip">LangChain</li>
+            <li class="chip">Streamlit</li>
+          </ul>
+          <a class="btn btn--primary" href="https://github.com/DaoMartin23/fpl-ai-assistant" target="_blank" rel="noopener">View repo</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="project-content">
+      <div class="container">
+
+        <section class="project-section" data-reveal>
+          <h2>Overview</h2>
+          <p>Fantasy Premier League is a weekly guess about which footballers will score points. This project replaces some of the guessing with data. A pipeline collects player and club statistics, matches them across sources, and stores them in SQLite. Four Random Forest models, one per position, predict each player's fantasy points for the coming gameweek and write the predictions back into the database. A Streamlit chatbot sits on top so you can ask about players, clubs and predictions in plain English.</p>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>Data pipeline</h2>
+          <p>No single source has everything, so the pipeline pulls from three.</p>
+          <div class="arch-grid">
+            <article class="card">
+              <h3>FPL API</h3>
+              <p>Season totals, prices, minutes, positions, and each player's gameweek-by-gameweek history.</p>
+            </article>
+            <article class="card">
+              <h3>Understat</h3>
+              <p>xG, xA, shots and key passes, read from an internal JSON endpoint that isn't documented and could change.</p>
+            </article>
+            <article class="card">
+              <h3>football-data.org</h3>
+              <p>League standings, results and fixtures. Needs a free API key and allows one request per 15 seconds per team.</p>
+            </article>
+          </div>
+          <p>The same player is spelled differently across the three, so a pandas and FuzzyWuzzy step matches names at an 86% similarity threshold before the merge. The result lands in two tables, <code>player_stats</code> and <code>club_stats</code>, linked by club name. <code>build_database.py</code> runs the whole thing end to end.</p>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>Models</h2>
+          <div class="facts">
+            <div class="fact"><div class="fact__num">4</div><div class="fact__label">position models</div></div>
+            <div class="fact"><div class="fact__num">3</div><div class="fact__label">data sources</div></div>
+            <div class="fact"><div class="fact__num">86%</div><div class="fact__label">name-match threshold</div></div>
+          </div>
+          <p>Goalkeepers, defenders, midfielders and forwards score points under different rules, so each position gets its own <code>RandomForestRegressor</code> with hand-tuned hyperparameters. The features are season totals, the previous gameweek's points and minutes, position-dependent stats such as goals, assists, xG, xA, shots, key passes and goals conceded, and club context like league points and the next opponent. The target is a player's points in their most recent completed gameweek.</p>
+          <p>Each model is scored on mean squared error and R² against a held-out split of 10 to 30% depending on the position, then saved with joblib into <code>models/</code>.</p>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>The chatbot</h2>
+          <p>The Streamlit app routes each question one of two ways. If it matches a fixed keyword list it goes to a LangChain SQL agent, which turns the question into a query against the database and reads the answer back. Anything else goes straight to <code>gpt-4o</code> as a general question. The keyword list is the simplest thing that worked, and it's first in line to be replaced.</p>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>Running it</h2>
+          <pre><code>python run.py                  # rebuild the database, then launch the chatbot
+python build_database.py       # rebuild only
+streamlit run app/chatbot.py   # launch against an existing database</code></pre>
+          <p>Needs a football-data.org key in <code>.env</code>, a season with at least five finished gameweeks, and fixtures still to play. Rebuilding deletes the existing database.</p>
+        </section>
+
+        <section class="project-section" data-reveal>
+          <h2>What's next</h2>
+          <ul class="list">
+            <li>Cross-validation in place of a single train/test split.</li>
+            <li>An intent classifier to replace the keyword routing.</li>
+            <li>Handling the start and end of a season, when there are fewer than five finished gameweeks or no fixtures left.</li>
+            <li>A stable replacement for the undocumented Understat endpoint.</li>
+          </ul>
+        </section>
+
+      </div>
+    </div>
+
+    <nav class="project-pager" aria-label="Other projects">
+      <div class="container project-pager__inner">
+        <a class="prev" href="f1-strategy-sim.html">
+          <span class="label">← Previous</span>
+          <span class="title">F1 Strategy Sim</span>
+        </a>
+        <a class="next" href="project-3.html">
+          <span class="label">Next →</span>
+          <span class="title">Personal Informatics App</span>
+        </a>
+      </div>
+    </nav>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© <span data-year>2026</span> Martin Dao</span>
+    </div>
+  </footer>
+</body>
+</html>

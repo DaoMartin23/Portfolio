@@ -1,0 +1,41 @@
+<!--
+  F1 car, top-down view, nose pointing up. The scroll progress marker
+  (the loader keeps the side profile in assets/car.svg). Solid silhouette:
+  every shape is filled currentColor with no strokes or cut-outs, so the
+  parts join by overlapping. Reference copy of the #car-top symbol inlined
+  in index.html; the marker is rotated 180deg there so the nose leads down.
+  viewBox 400x1160, symmetric about x=200.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 1160" width="400" height="1160"
+     color="#f5f5f5" style="background:#0a0a0a">
+  <g fill="currentColor">
+    <!-- Nose cone -->
+    <path d="M200 0 C222 0 232 14 232 40 L240 300 L256 440 L144 440 L160 300 L168 40 C168 14 178 0 200 0 Z"/>
+    <!-- Front wing: main plane, swept flaps, endplates -->
+    <rect x="20" y="76" width="360" height="34" rx="6"/>
+    <path d="M30 108 L170 150 L230 150 L370 108 L370 170 L230 200 L170 200 L30 170 Z"/>
+    <rect x="4" y="70" width="24" height="126" rx="5"/>
+    <rect x="372" y="70" width="24" height="126" rx="5"/>
+    <!-- Front wheels -->
+    <rect x="2" y="204" width="80" height="141" rx="18"/>
+    <rect x="318" y="204" width="80" height="141" rx="18"/>
+    <!-- Front suspension -->
+    <path d="M78 250 L175 232 L176 246 L78 266 Z M78 290 L178 320 L178 336 L78 306 Z M322 250 L225 232 L224 246 L322 266 Z M322 290 L222 320 L222 336 L322 306 Z"/>
+    <!-- Cockpit, sidepods and engine cover -->
+    <path d="M144 440 L256 440 L268 470 C330 500 355 540 360 600 C362 650 340 700 312 780 L270 960 L230 1000 L170 1000 L130 960 L88 780 C60 700 38 650 40 600 C45 540 70 500 132 470 Z"/>
+    <!-- Mirrors -->
+    <circle cx="115" cy="472" r="16"/>
+    <circle cx="285" cy="472" r="16"/>
+    <!-- Floor edges -->
+    <path d="M44 640 L62 640 L66 905 L46 905 Z M356 640 L338 640 L334 905 L354 905 Z"/>
+    <!-- Rear wheels -->
+    <rect x="5" y="900" width="90" height="150" rx="20"/>
+    <rect x="305" y="900" width="90" height="150" rx="20"/>
+    <!-- Gearbox and rear suspension -->
+    <rect x="176" y="980" width="48" height="60" rx="6"/>
+    <path d="M90 955 L182 995 L182 1009 L90 971 Z M90 1015 L182 1022 L182 1036 L90 1031 Z M310 955 L218 995 L218 1009 L310 971 Z M310 1015 L218 1022 L218 1036 L310 1031 Z"/>
+    <!-- Rear wing and its supports -->
+    <rect x="110" y="1010" width="180" height="90" rx="4"/>
+    <path d="M116 1100 L132 1100 L128 1160 L122 1160 Z M284 1100 L268 1100 L272 1160 L278 1160 Z"/>
+  </g>
+</svg>
